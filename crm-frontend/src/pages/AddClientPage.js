@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AddClientPage = () => {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [nip, setNip] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Pobierz token JWT z localStorage
       const token = localStorage.getItem('authToken');
       if (!token) {
         throw new Error('Nie jesteś zalogowany.');
       }
 
-      // Wyślij dane do serwera
+      // Wyślij dane do serwera, aby utworzyć nowego klienta
       const response = await axios.post(
         '/api/clients',
         { name, address, nip },
@@ -28,20 +29,16 @@ const AddClientPage = () => {
         }
       );
 
-      // Po pomyślnym dodaniu klienta pokaż komunikat o sukcesie
+      // Po pomyślnym dodaniu klienta pokaż komunikat i przekieruj na stronę akcji klienta
       if (response.status === 201) {
         alert('Klient został dodany!');
-        // Wyczyść formularz po dodaniu klienta
-        setName('');
-        setAddress('');
-        setNip('');
-        setErrorMessage('');
+        const newClientId = response.data._id;
+        // Przekierowanie na stronę akcji nowo utworzonego klienta
+        navigate(`/clients/${newClientId}/actions`);
       }
     } catch (error) {
-      console.error('Błąd podczas dodawania klienta:', error);
-      setErrorMessage(
-        error.response?.data?.error || 'Wystąpił błąd podczas dodawania klienta.'
-      );
+      console.error('Błąd podczas dodawania klienta:', error.response?.data || error.message);
+      setErrorMessage(error.response?.data?.error || 'Wystąpił błąd podczas dodawania klienta.');
     }
   };
 

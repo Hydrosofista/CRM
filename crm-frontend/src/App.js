@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import ClientList from './components/ClientList';
 import AddClientPage from './pages/AddClientPage';
 import LoginPage from './pages/LoginPage';
+import ClientActionsPage from './pages/ClientActionsPage';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -28,6 +29,14 @@ function App() {
             element={
               <PrivateRoute>
                 <AddClientPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/clients/:id/actions"
+            element={
+              <PrivateRoute>
+                <ClientActionsPage />
               </PrivateRoute>
             }
           />
